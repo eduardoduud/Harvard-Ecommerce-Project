@@ -21,6 +21,14 @@ class Listing(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    @property
+    def current_price(self):
+        highest_bid = self.bids.order_by('-amount').first()
+        if highest_bid:
+            return highest_bid.amount
+        else:
+            return self.starting_bid
+
     def __str__(self):
         return self.title
 

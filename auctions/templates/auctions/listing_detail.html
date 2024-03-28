@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>{{ listing.title }}</h2>
+    {% if listing.image_url %}
+    <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+    {% endif %}
+    {% if is_owner %}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="close_auction">Close Auction</button>
+    </form>
+    {% endif %}
+    <p>Description: {{ listing.description }}</p>
+    <p>Current Price: {{ listing.current_price }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% if request.user.is_authenticated %}
+            <button type="submit" name="action" value="{% if listing in user.watchlist.all %}remove_from_watchlist{% else %}add_to_watchlist{% endif %}">
+                {% if listing in user.watchlist.all %}Remove from Watchlist{% else %}Add to Watchlist{% endif %}
+            </button>
+            <input type="number" name="bid_amount" step="0.01" required>
+            <button type="submit" name="action" value="place_bid">Place Bid</button>
+        {% endif %}
+    </form>
+    {% if request.user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="comment_content"></textarea>
+        <button type="submit" name="action" value="add_comment">Add Comment</button>
+    </form>
+    {% endif %}
+    <h3>Comments</h3>
+    <ul>
+        {% for comment in listing.comments.all %}
+            <li>{{ comment.commenter }}: {{ comment.content }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
