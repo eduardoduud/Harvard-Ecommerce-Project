@@ -3,19 +3,23 @@
 {% block body %}
     <h2>Active Listings</h2>
     {% if active_listings %}
-        <ul>
+        <div class="col p-5">
             {% for listing in active_listings %}
-                <li>
-                    <h3><a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a></h3>
+                <div class="p-4 my-3 row border">
                     {% if listing.image_url %}
-                    <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                    <div class="col text-center">
+                        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                    </div>
                     {% endif %}
-                    <p>{{ listing.description }}</p>
-                    <p>Current Price: {{ listing.current_price }}</p>
-                    <p>Starting Bid: {{ listing.starting_bid }}</p>
-                </li>
+                    <div class="col-8">
+                        <h3><a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a></h3>
+                        <p>{{ listing.description }}</p>
+                        <p>Current Price: ${{ listing.current_price }}</p>
+                        <p>Starting Bid: ${{ listing.starting_bid }}</p>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p>No active listings available.</p>
     {% endif %}

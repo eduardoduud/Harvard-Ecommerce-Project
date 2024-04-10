@@ -13,12 +13,25 @@
     {% endif %}
     <p>Description: {{ listing.description }}</p>
     <p>Current Price: {{ listing.current_price }}</p>
+    {% if messages %}
+        {% for message in messages %}
+            <span>{{ message }}</span>
+        {% endfor %}
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         {% if request.user.is_authenticated %}
-            <button type="submit" name="action" value="{% if listing in user.watchlist.all %}remove_from_watchlist{% else %}add_to_watchlist{% endif %}">
-                {% if listing in user.watchlist.all %}Remove from Watchlist{% else %}Add to Watchlist{% endif %}
-            </button>
+            {% if listing in request.user.watchlist.listings.all %}
+                <button type="submit" name="action" value="remove_from_watchlist">Remove from Watchlist</button>
+            {% else %}
+                <button type="submit" name="action" value="add_to_watchlist">Add to Watchlist</button>
+            {% endif %}
+        {% endif %}
+    </form>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% if request.user.is_authenticated %}
             <input type="number" name="bid_amount" step="0.01" required>
             <button type="submit" name="action" value="place_bid">Place Bid</button>
         {% endif %}
@@ -31,9 +44,9 @@
     </form>
     {% endif %}
     <h3>Comments</h3>
-    <ul>
+    <div>
         {% for comment in listing.comments.all %}
-            <li>{{ comment.commenter }}: {{ comment.content }}</li>
+            <div>{{ comment.commenter }}: {{ comment.content }}</div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

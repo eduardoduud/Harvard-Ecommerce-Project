@@ -16,10 +16,11 @@ class Listing(models.Model):
     description = models.TextField()
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
     image_url = models.URLField(blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='listings', null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings')
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    watchlist = models.ManyToManyField('Watchlist', related_name='watchlisted_listings', blank=True)
 
     @property
     def current_price(self):
@@ -49,3 +50,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.commenter.username} - {self.content}"
+    
+class Watchlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    listings = models.ManyToManyField('Listing', related_name='watchlists', blank=True)
+
+    def __str__(self):
+        return f"Watchlist of {self.user.username}"
